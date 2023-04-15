@@ -1,0 +1,36 @@
+package com.maa.tp_eburtis.controller;
+
+import com.maa.tp_eburtis.model.Personne;
+import com.maa.tp_eburtis.service.PersonneInterface;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+public class PersonneController {
+
+    @Autowired
+    private PersonneInterface personneService;
+
+    @GetMapping("/getAllPersonne")
+    public Iterable<Personne> getPersonne(){
+        return personneService.findAll();
+    }
+
+    @PostMapping("/addPersonne")
+    public Personne savePersonne(@RequestBody Personne personne){
+        return personneService.save(personne);
+    }
+
+    @DeleteMapping("/deletePersonne/{id}")
+    public ResponseEntity<HttpStatus> deletePersonne(@PathVariable("id") Long id){
+        try{
+            personneService.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}

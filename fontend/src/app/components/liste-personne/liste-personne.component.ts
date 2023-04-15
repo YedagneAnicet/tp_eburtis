@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Personne } from 'src/app/models/personne';
 import { PersonneService } from 'src/app/services/personne.service';
 
@@ -7,30 +8,37 @@ import { PersonneService } from 'src/app/services/personne.service';
   selector: 'app-liste-personne',
   templateUrl: './liste-personne.component.html',
   styleUrls: ['./liste-personne.component.scss'],
+  providers: [MessageService]
 })
 export class ListePersonneComponent implements OnInit {
   first = 0; // attribuer lié à la pagination
   rows = 10; // attribuer lié à la pagination
 
   visible!: boolean;
-
   submitted!: boolean;
-  personne!: Personne;
+  personne!: any;
+  listePersonne: any;
+  btnText!: any;
 
-  formpersonne!: FormGroup;
-
-  listePersonne : any;
-
-  constructor(private _personneService: PersonneService) {}
+  constructor(
+    private _personneService: PersonneService,
+    private _messageService: MessageService,
+    private _confirmationService: ConfirmationService
+  ) {}
 
   ngOnInit() {
-    this.getListePersonne()
+    this.getListePersonne();
   }
 
+  // Cette fonction permet d'afficher le formulaire de saisie de personne
   showDialog() {
     this.visible = true;
+    this.submitted = false;
+    this.personne = {};
+    this.btnText = 'Ajouter';
   }
 
+  // Cette fonction permet de récupérer la liste des personnes depuis le service
   getListePersonne() {
     this._personneService.getAllPersonne().subscribe({
       next: (reponse: any) => {
@@ -42,10 +50,17 @@ export class ListePersonneComponent implements OnInit {
     });
   }
 
+  // Cette fonction permet de pré-remplir le formulaire avec les données d'une personne existante pour la modifier
+  editPersonne(personne: Personne) {
+    this.personne = { ...personne };
+    this.visible = true;
+    this.btnText = 'Modifier';
+  }
+
+  // Cette fonction permet de supprimer une personne de la liste
   deletePersonne(id: number) {
     this._personneService.deletePersonne(id).subscribe({
       next: (reponse: any) => {
-        // Si la suppression a réussi, on met à jour la liste des personnes
         this.getListePersonne();
       },
       error: (error: any) => {
@@ -54,4 +69,58 @@ export class ListePersonneComponent implements OnInit {
     });
   }
 
+  // Cette fonction permet d'ajouter ou de modifier une personne
+  savePersonne(id: number, personne: Personne) {
+    this.submitted = true;
+    // Vérification des champs du formulaire
+    if (!personne.nom || !personne.prenoms || !personne.age) {
+      this._messageService.add({
+        key: 'tc',
+        severity: 'error',
+        summary: 'Erreur',
+        detail: 'Veuillez remplir tous les champs obligatoires.',
+        life: 3000,
+      });
+      return;
+    }
+
+    if (this.btnText === 'Ajouter') {
+      this._personneService.addPersonne(personne).subscribe({
+        complete: () => {
+          this.getListePersonne();
+          this._messageService.add({
+            key: 'tc',
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Personne Ajoutée',
+            life: 3000,
+          });
+        },
+        error: (error: any) => {
+          console.log(error);
+        },
+      });
+    } else {
+      const index = this.listePersonne.findIndex(
+        (p: { id: number }) => p.id === id
+      );
+      this._personneService.updatePersonne(id, personne).subscribe({
+        complete: () => {
+          this.listePersonne[index] = personne;
+          this._messageService.add({
+            key: 'tc',
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Personne modifiée',
+            life: 3000,
+          });
+        },
+        error: (error: any) => {
+          console.log(error);
+        },
+      });
+    }
+
+    this.visible = false;
+  }
 }

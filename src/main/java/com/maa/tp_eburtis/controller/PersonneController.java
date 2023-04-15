@@ -33,4 +33,14 @@ public class PersonneController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PutMapping("/updatePersonne/{id}")
+    public ResponseEntity<Personne> updatePesonne(@PathVariable("id") Long id, @RequestBody Personne personne){
+        try{
+            Personne updatePersonne = personneService.update(id, personne);
+            return new ResponseEntity<>(updatePersonne, HttpStatus.OK);
+        }catch (EntityNotFoundException ex){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

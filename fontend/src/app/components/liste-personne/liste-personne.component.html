@@ -1,3 +1,5 @@
+<p-toast></p-toast>
+
 <div class="card">
   <p-toolbar>
     <div class="p-toolbar-group-left">
@@ -31,7 +33,7 @@
     [(first)]="first"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [rowsPerPageOptions]="[10, 20, 30]"
-    [globalFilterFields]="['nom','age']"
+    [globalFilterFields]="['nom', 'age']"
     class="center"
   >
     <ng-template pTemplate="header">
@@ -43,9 +45,9 @@
         <th>Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-personne>
+    <ng-template pTemplate="body" let-personne let-index="rowIndex">
       <tr>
-        <td>{{ personne.id }}</td>
+        <td>{{ index + 1 }}</td>
         <td>{{ personne.nom }}</td>
         <td>{{ personne.prenoms }}</td>
         <td>{{ personne.age }}</td>
@@ -55,6 +57,7 @@
             pRipple
             icon="pi pi-pencil"
             class="p-button-rounded p-button-success mr-2"
+            (click)="editPersonne(personne)"
           ></button>
           <button
             pButton
@@ -77,67 +80,64 @@
   styleClass="p-fluid"
   [draggable]="false"
 >
-<ng-template pTemplate="content">
-    <form [formGroup]="formpersonne">
-      <br>
-      <div class="p-float-label">
-        <input
-          pInputText
-          id="nom"
-          [(ngModel)]="personne.nom"
-          required
-          autofocus
-        />
-        <label htmlFor="nom">Nom</label>
-        <small class="p-invalid" *ngIf="submitted && !personne.nom"
-          >Champ obligatoire</small
-        >
-      </div>
-      <br>
-      <div class="p-float-label">
-        <input
-          pInputText
-          id="prenom"
-          [(ngModel)]="personne.nom"
-          required
-          autofocus
-        />
-        <label htmlFor="prenom">Premon</label>
-        <small class="p-invalid" *ngIf="submitted && !personne.prenom"
-          >Champ obligatoire</small
-        >
-      </div>
-      <br>
-      <div class="p-float-label">
-        <input
-          pInputText
-          id="age"
-          [(ngModel)]="personne.nom"
-          required
-          autofocus
-        />
-        <label htmlFor="age">Age</label>
-        <small class="p-invalid" *ngIf="submitted && !personne.nom"
-          >Champ obligatoire</small
-        >
-      </div>
-    </form>
-</ng-template>
-<ng-template pTemplate="footer">
-  <button
-    pButton
-    pRipple
-    label="Cancel"
-    icon="pi pi-times"
-    class="p-button-text"
-  ></button>
-  <button
-    pButton
-    pRipple
-    label="Save"
-    icon="pi pi-check"
-    class="p-button-text"
-  ></button>
-</ng-template>
-
+  <ng-template pTemplate="content">
+    <br />
+    <div class="p-float-label">
+      <input
+        pInputText
+        id="nom"
+        [(ngModel)]="personne.nom"
+        required
+        autofocus
+        #nomInput="ngModel"
+        [ngClass]="{
+          'ng-dirty': nomInput.invalid && submitted
+        }"
+      />
+      <label htmlFor="nom">Nom</label>
+    </div>
+    <br />
+    <div class="p-float-label">
+      <input
+        type="texte"
+        pInputText
+        id="prenoms"
+        [(ngModel)]="personne.prenoms"
+        required="true"
+        autofocus
+        #prenomsInput="ngModel"
+        [ngClass]="{
+          'ng-dirty': prenomsInput.invalid && submitted
+        }"
+      />
+      <label htmlFor="prenoms">Premons</label>
+    </div>
+    <br />
+    <div class="p-float-label">
+      <input
+        pInputText
+        id="age"
+        [(ngModel)]="personne.age"
+        required
+        autofocus
+        #ageInput="ngModel"
+        type="number"
+        min="1"
+        [ngClass]="{
+          'ng-dirty': ageInput.invalid && submitted
+        }"
+      />
+      <label htmlFor="age">Age</label>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      pRipple
+      [label]="btnText"
+      icon="pi pi-check"
+      class="p-button-text"
+      (click)="savePersonne(personne.id, personne)"
+    ></button>
+  </ng-template>
 </p-dialog>

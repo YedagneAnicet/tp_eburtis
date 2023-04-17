@@ -45,6 +45,7 @@ export class ListePersonneComponent implements OnInit {
     this._personneService.getAllPersonne().subscribe({
       next: (reponse: any) => {
         this.listePersonne = reponse;
+        console.log(reponse)
       },
       error: (error: any) => {
         console.log(error);

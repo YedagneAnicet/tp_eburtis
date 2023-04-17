@@ -27,6 +27,7 @@ public class Departement {
         this.personnes = personnes;
     }
 
+
     public String getCode() {
         return code;
     }

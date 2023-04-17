@@ -22,11 +22,11 @@ export class ListePersonneComponent implements OnInit {
   departement: any;
 
   cols: any[] = [];
-
+  agesOptions!: any[];
 
   constructor(
     private _personneService: PersonneService,
-    private _messageService: MessageService,
+    private _messageService: MessageService
   ) {}
 
   ngOnInit() {
@@ -40,6 +40,11 @@ export class ListePersonneComponent implements OnInit {
         field: 'age',
         header: 'Age',
       },
+    ];
+
+    this.agesOptions = [
+      { label: 'Mineur', value: () => (this.personne.age < 18 ? 'mineur' : 'majeur') },
+      { label: 'Majeur', value: () => (this.personne.age >= 18 ? 'majeur' : 'mineur') },
     ];
   }
 

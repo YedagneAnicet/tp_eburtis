@@ -39,7 +39,10 @@
     <ng-template pTemplate="header">
       <tr>
         <th>N°</th>
-        <th>Nom</th>
+        <th pSortableColumn="nom">
+          Nom
+          <p-sortIcon></p-sortIcon>
+        </th>
         <th>Prenoms</th>
         <th>Age</th>
         <th>Departement</th>
@@ -52,7 +55,7 @@
         <td>{{ personne.nom }}</td>
         <td>{{ personne.prenoms }}</td>
         <td>{{ personne.age }}</td>
-        <td>{{personne.departement.designation}}</td>
+        <td>{{ personne.departement.designation }}</td>
         <td>
           <button
             pButton
@@ -131,7 +134,7 @@
       />
       <label htmlFor="age">Age</label>
     </div>
-    <br>
+    <br />
     <div class="p-float-label">
       <p-autoComplete
         [(ngModel)]="departement"

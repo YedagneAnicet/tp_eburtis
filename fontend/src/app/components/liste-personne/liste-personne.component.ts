@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService, } from 'primeng/api';
 import { Personne } from 'src/app/models/personne';
 import { PersonneService } from 'src/app/services/personne.service';
 
@@ -8,7 +7,7 @@ import { PersonneService } from 'src/app/services/personne.service';
   selector: 'app-liste-personne',
   templateUrl: './liste-personne.component.html',
   styleUrls: ['./liste-personne.component.scss'],
-  providers: [MessageService]
+  providers: [MessageService],
 })
 export class ListePersonneComponent implements OnInit {
   first = 0; // attribuer lié à la pagination
@@ -20,16 +19,28 @@ export class ListePersonneComponent implements OnInit {
   listePersonne: any;
   btnText!: any;
 
-  departement : any;
+  departement: any;
+
+  cols: any[] = [];
+
 
   constructor(
     private _personneService: PersonneService,
     private _messageService: MessageService,
-    private _confirmationService: ConfirmationService
   ) {}
 
   ngOnInit() {
     this.getListePersonne();
+    this.cols = [
+      {
+        field: 'nom',
+        header: 'Nom',
+      },
+      {
+        field: 'age',
+        header: 'Age',
+      },
+    ];
   }
 
   // Cette fonction permet d'afficher le formulaire de saisie de personne
@@ -45,7 +56,7 @@ export class ListePersonneComponent implements OnInit {
     this._personneService.getAllPersonne().subscribe({
       next: (reponse: any) => {
         this.listePersonne = reponse;
-        console.log(reponse)
+        console.log(reponse);
       },
       error: (error: any) => {
         console.log(error);

@@ -15,8 +15,8 @@ import { DialogModule } from 'primeng/dialog';
 import { CardModule } from 'primeng/card';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
-import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -52,6 +52,7 @@ import { CorsInterceptor } from './cors.interceptor';
     HttpClientModule,
     ConfirmDialogModule,
     ToastModule,
+    AutoCompleteModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true },

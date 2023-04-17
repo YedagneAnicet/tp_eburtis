@@ -42,6 +42,7 @@
         <th>Nom</th>
         <th>Prenoms</th>
         <th>Age</th>
+        <th>Departement</th>
         <th>Actions</th>
       </tr>
     </ng-template>
@@ -51,6 +52,7 @@
         <td>{{ personne.nom }}</td>
         <td>{{ personne.prenoms }}</td>
         <td>{{ personne.age }}</td>
+        <td></td>
         <td>
           <button
             pButton
@@ -128,6 +130,16 @@
         }"
       />
       <label htmlFor="age">Age</label>
+    </div>
+    <br>
+    <div class="p-float-label">
+      <p-autoComplete
+        [(ngModel)]="departement"
+        [dropdown]="true"
+        field="departement"
+        id="departement"
+      ></p-autoComplete>
+      <label htmlFor="departement">Departement</label>
     </div>
   </ng-template>
   <ng-template pTemplate="footer">

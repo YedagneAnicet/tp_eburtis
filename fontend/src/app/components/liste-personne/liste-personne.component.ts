@@ -20,6 +20,8 @@ export class ListePersonneComponent implements OnInit {
   listePersonne: any;
   btnText!: any;
 
+  departement : any;
+
   constructor(
     private _personneService: PersonneService,
     private _messageService: MessageService,

@@ -27,23 +27,23 @@ public class PersonneService implements PersonneInterface {
 
     @Override
     public Personne save(Personne personne){
-        if(personne == null){
-            throw new IllegalArgumentException("Champs obligatoire");
+        if(personne == null || personne.getNom() == null || personne.getPrenoms() == null){
+            throw new IllegalArgumentException("Les champs nom et prenoms sont obligatoires.");
         }
         return personneRepository.save(personne);
     }
 
     @Override
     public Personne update(Long id, Personne personne) {
-       if(personne == null){
-           throw new IllegalArgumentException("champs obligatoire");
-       }
-       Personne personneSelect = findById(id);
-       personneSelect.setNom(personne.getNom());
-       personneSelect.setPrenoms(personne.getPrenoms());
-       personneSelect.setAge(personne.getAge());
+        if(personne == null || personne.getNom() == null || personne.getPrenoms() == null){
+            throw new IllegalArgumentException("Les champs nom et prenoms sont obligatoires.");
+        }
+        Personne personneSelect = findById(id);
+        personneSelect.setNom(personne.getNom());
+        personneSelect.setPrenoms(personne.getPrenoms());
+        personneSelect.setAge(personne.getAge());
 
-       return personneRepository.save(personneSelect);
+        return personneRepository.save(personneSelect);
     }
 
     @Override

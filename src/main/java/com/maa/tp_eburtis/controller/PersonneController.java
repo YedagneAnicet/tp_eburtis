@@ -1,7 +1,10 @@
 package com.maa.tp_eburtis.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.maa.tp_eburtis.model.Personne;
 import com.maa.tp_eburtis.service.PersonneInterface;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +16,13 @@ public class PersonneController {
 
     @Autowired
     private PersonneInterface personneService;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @PostConstruct
+    public void configureObjectMapper() {
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    }
 
     @GetMapping("/getAllPersonne")
     public Iterable<Personne> getPersonne(){

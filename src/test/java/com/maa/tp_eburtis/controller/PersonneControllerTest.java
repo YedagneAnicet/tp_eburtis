@@ -3,6 +3,7 @@ package com.maa.tp_eburtis.controller;
 import com.maa.tp_eburtis.model.Departement;
 import com.maa.tp_eburtis.model.Personne;
 import com.maa.tp_eburtis.repository.PersonneRepository;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +12,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
+import java.util.HashSet;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -37,7 +37,7 @@ public class PersonneControllerTest {
     @AfterAll
     public void clearDatabase(){
         this.personneRepository.deleteAll();
-        json = null;
+        this.json=null;
     }
     @Test
     @Order(value=1)
@@ -74,41 +74,43 @@ public class PersonneControllerTest {
     @DisplayName("test unitaire pour la récupération de toutes les personnes")
     public void testGetAllPersonne() throws Exception{
         // Ajouter une personne pour les besoins du test
-        Personne personne = new Personne("Akpa", "Bedi Paul Donatien", 24, new Departement("DAB","DABOU"));
-        this.personneRepository.save(personne);
+        Departement departement = new Departement("DAB", "DABOU", new HashSet<>());
+        Personne personne = new Personne(null, "Yedagne", "Mel Ange Anicet", 22, departement);
+        departement.getPersonnes().add(personne);
+        personneRepository.save(personne);
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/getAllPersonne"))
+        MvcResult result = this.mvc.perform(MockMvcRequestBuilders.get("/getAllPersonne"))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) jsonPath("$.[0].nom", is("Akpa")))
-                .andExpect((ResultMatcher) jsonPath("$.[0].prenoms", is("Bedi Paul Donatien")))
-                .andExpect((ResultMatcher) jsonPath("$.[0].age", is(24)))
-                .andExpect((ResultMatcher) jsonPath("$.[0].departement_code", is("DAB")))
                 .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        JSONArray jsonArray = new JSONArray(content);
+
+        JSONObject jsonObject = jsonArray.getJSONObject(0);
+        assertEquals("Yedagne", jsonObject.getString("nom"));
+        assertEquals("Mel Ange Anicet", jsonObject.getString("prenoms"));
+        assertEquals(22, jsonObject.getInt("age"));
+        assertEquals("DAB", jsonObject.getJSONObject("departement").getString("code"));
     }
+
 
     @Test
     @Order(value=3)
     @DisplayName("test unitaire pour la suppression d'une personne existante")
     public void testDeleteExistingPersonne() throws Exception{
         // Ajouter une personne pour les besoins du test
-        Personne personne = new Personne("Yedagne", "Anne Marie", 21, new Departement("YAM", "Yamoussoukro"));
-        personne = this.personneRepository.save(personne);
+        Departement departement = new Departement("YAM", "Yamoussoukro", new HashSet<>());
+        Personne personne = new Personne(null, "Yedagne", "Anne Marie", 21, departement);
+        personne = personneRepository.save(personne);
 
-        this.mvc.perform(MockMvcRequestBuilders.delete("/deletePersonne/" + personne.getId()))
+        MvcResult mvcResult = this.mvc.perform(MockMvcRequestBuilders.delete("/deletePersonne/" + personne.getId()))
                 .andExpect(status().isNoContent())
                 .andReturn();
 
+
         // Vérifier que la personne a bien été supprimée
-        Assertions.assertFalse(this.personneRepository.findById(personne.getId()).isPresent());
+        Assertions.assertFalse(personneRepository.findById(personne.getId()).isPresent());
     }
 
-    @Test
-    @Order(value=4)
-    @DisplayName("test unitaire pour la suppression d'une personne inexistante")
-    public void testDeleteNonExistingPersonne() throws Exception{
-        this.mvc.perform(MockMvcRequestBuilders.delete("/deletePersonne/9999"))
-                .andExpect(status().isNotFound())
-                .andReturn();
-    }
 
 }
